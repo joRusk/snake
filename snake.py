@@ -38,30 +38,27 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         
-    def update(self):
-        # print("here")
-        # self.previousCoords = (self.rect.x,self.rect.y)
-        if self.horizontal:
-            self.rect.x = self.rect.x + self.direction
-        else:
-            self.rect.y = self.rect.y + self.direction
+    # def update(self):
+    #     # print("here")
+    #     # self.previousCoords = (self.rect.x,self.rect.y)
+    #     if self.horizontal:
+    #         self.rect.x = self.rect.x + self.direction
+    #     else:
+    #         self.rect.y = self.rect.y + self.direction
       
 def isGameOver(goal,snakeSegs,allSpritesList):
     result = False
     player = snakeSegs[0]
-    # allSpritesList.remove(player)
     
     # check for out of bounds
-    if (player.rect.x <= 0 or player.rect.y <= 0 or player.rect.x >= (SCREEN_WIDTH-BLOCK_WIDTH) or player.rect.y >= (SCREEN_HEIGHT-BLOCK_HEIGHT)):
+    if (player.rect.x <= 0 or player.rect.y <= 0 or player.rect.x >= SCREEN_WIDTH or player.rect.y >= SCREEN_HEIGHT):
         result = True
     # check if hitting itself
     hitSnakeSegs = pygame.sprite.spritecollide(player,allSpritesList,False)
     for snake in hitSnakeSegs:
         if (snake != player and snake != goal):
             result = True
-    
-    # snakeSegs.insert(0,player)
-    # allSpritesList.add(player)
+             
     return result
     
 def placeGoal(snakeSegs):
@@ -74,8 +71,8 @@ def placeGoal(snakeSegs):
         count = 0
         for seg in snakeSegs:
             if (x==seg.rect.x and y==seg.rect.y):
-                x = random.randrange(SCREEN_WIDTH)
-                y = random.randrange(SCREEN_HEIGHT)
+                x = random.randrange(SCREEN_WIDTH-BLOCK_MARGIN)
+                y = random.randrange(SCREEN_HEIGHT-BLOCK_MARGIN)
                 break
             else:
                 count += 1
@@ -93,7 +90,7 @@ def main():
     snakeSegs = []
     allSpritesList = pygame.sprite.Group()
     
-    for i in range(5):
+    for i in range(3):
         x = 250 - ((BLOCK_WIDTH + BLOCK_MARGIN)*i)
         y = 30
         snakeBlock = Block(WHITE, x, y)
@@ -159,14 +156,12 @@ def main():
             newSeg = Block(WHITE,snakeSegs[0].rect.x+x_change,snakeSegs[0].rect.y+y_change)
             snakeSegs.insert(len(snakeSegs),newSeg)
             allSpritesList.add(newSeg)
-        allSpritesList.add(goal)
-            
+        allSpritesList.add(goal)  
                     
         screen.fill(BLACK)
-    
         allSpritesList.draw(screen)
-        
-        clock.tick(20)
+        # set game to 15 FPS
+        clock.tick(15)
         pygame.display.flip()
         
     
